@@ -1,7 +1,7 @@
 import logging
 import flask
 import telebot
-from . import config
+import config
 
 API_TOKEN = config.API_TOKEN
 

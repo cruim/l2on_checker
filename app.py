@@ -2,7 +2,6 @@ from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String, ForeignKey, Column, Boolean, DateTime, CheckConstraint
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
-import bcrypt
 import config
 
 

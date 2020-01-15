@@ -32,7 +32,8 @@ def get_staff_scheduller_list(user_id):
     return staff_list
 
 def get_items_matching_user_search(name):
-    return db.session.query(Staff.name, Staff.l2on_id).filter(Staff.name.ilike('%{}%'.format(name))).all()
+    result = tuple(db.session.query(Staff.name, Staff.l2on_id).filter(Staff.name.ilike('%{}%'.format(name))).all())
+    return dict((x, y) for x, y in result)
 
 def create_error_log(error_location, error_message, user_id):
     error = ErrorLog(error_location=error_location, error_message=error_message, user_id=user_id)
@@ -66,7 +67,7 @@ def user_message_processing(telegram_id, message):
     else:
         if last_user_log.state == 'search_item':
             update_user_log_user_message(user_log=last_user_log, message=message)
-            return 'Результат поиска.'
+            return get_items_matching_user_search(message)
             # Возвращать inlinekeyboard c подходящими предметами
         else:
             return False

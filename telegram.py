@@ -53,7 +53,8 @@ def webhook():
 # Handle all other messages
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
-    bot.send_message(message.chat.id, message.text)
+    text_responce = api.user_message_processing(telegram_id=message.chat.id, message=message.text)
+    bot.send_message(message.chat.id, text_responce or message.text)
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):

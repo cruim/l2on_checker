@@ -64,3 +64,5 @@ def user_message_processing(telegram_id, message):
         if last_user_log.state == 'search_item':
             update_user_log_user_message(user_log=last_user_log, message=message)
             return 'Результат поиска.'
+        else:
+            return False

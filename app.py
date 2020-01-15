@@ -3,12 +3,13 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Integer, String, ForeignKey, Column, Boolean, DateTime, CheckConstraint
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
 import bcrypt
+import config
 
 
 app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:postgres@localhost:5433/flask'
-app.config['SECRET_KEY'] = 'super-secret'
-app.config['SECURITY_REGISTERABLE'] = True
+app.config['SQLALCHEMY_DATABASE_URI'] = config.SQLALCHEMY_DATABASE_URI
+app.config['SECRET_KEY'] = config.SECRET_KEY
+app.config['SECURITY_REGISTERABLE'] = config.SECURITY_REGISTERABLE
 
 app.debug = True
 db = SQLAlchemy(app)

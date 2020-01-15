@@ -60,9 +60,13 @@ def user_message_processing(telegram_id, message):
     elif message == 'search_item':
         add_user_log(telegram_id=telegram_id, state='search_item')
         return 'Введите название предмета.'
+    elif message == 'telegram_id':
+        add_user_log(telegram_id=telegram_id, state='telegram_id')
+        return 'Твой telegram_id ' + str(telegram_id)
     else:
         if last_user_log.state == 'search_item':
             update_user_log_user_message(user_log=last_user_log, message=message)
             return 'Результат поиска.'
+            # Возвращать inlinekeyboard c подходящими предметами
         else:
             return False

@@ -69,7 +69,5 @@ def user_message_processing(telegram_id, message):
         if last_user_log.state == 'search_item':
             update_user_log_user_message(user_log=last_user_log, message=message)
             return get_items_matching_user_search(message)
-            # return {'Двуручный Топор Неистового Таути': 47868}
-            # Возвращать inlinekeyboard c подходящими предметами
         else:
             return False

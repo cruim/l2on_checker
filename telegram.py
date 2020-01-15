@@ -54,13 +54,12 @@ def webhook():
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
     bot.send_message(message.chat.id, message.text)
-    # text_responce = api.user_message_processing(telegram_id=message.from_user.id, message=message.text)
-    # bot.reply_to(message, text_responce)
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
     if call.message:
-        bot.send_message(call.message.chat.id, call.data)
+        text_responce = api.user_message_processing(telegram_id=call.message.chat.id, message=call.data)
+        bot.send_message(call.message.chat.id, text_responce)
 
 
 app.run(host=WEBHOOK_LISTEN,

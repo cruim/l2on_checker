@@ -68,7 +68,7 @@ def user_message_processing(telegram_id, message):
     else:
         if last_user_log.state == 'search_item' and last_user_log.message:
             add_user_log(telegram_id=telegram_id, state='pick_item')
-            update_user_log_user_message(user_log=last_user_log, message=message)
+            # update_user_log_user_message(user_log=last_user_log, message=message)
             return 'Введите цену.'
         elif last_user_log.state == 'search_item':
             update_user_log_user_message(user_log=last_user_log, message=message)

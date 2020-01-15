@@ -31,9 +31,7 @@ def generate_keyboard(keys, message, telegram_id):
 
 @bot.message_handler(commands=['start', 'help', 'test'])
 def send_welcome(message):
-    # api.add_user_log(telegram_id=message.from_user.id, state='main_menu')
     keys = api.user_message_processing(telegram_id=message.from_user.id, message=message.text)
-    # keys = {'item_list': 'Список отслеживаемых предметов', 'search_item': 'Поиск предмета', 'telegram_id': 'Telegram ID'}
     generate_keyboard(keys=keys, message='Main Keyboard', telegram_id=message.from_user.id)
 
 # Empty webserver index, return nothing, just http 200
@@ -55,7 +53,8 @@ def webhook():
 # Handle all other messages
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
-    bot.reply_to(message, message.text + 'test')
+    text_responce = api.user_message_processing(telegram_id=message.from_user.id, message=message.text)
+    bot.reply_to(message, text_responce)
 
 
 app.run(host=WEBHOOK_LISTEN,

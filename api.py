@@ -13,9 +13,13 @@ def add_user_log(telegram_id, state):
     db.session.add(user_log)
     db.session.commit()
 
-def get_last_user_log_state(telegram_id):
+def get_last_user_log(telegram_id):
     user_id = get_user_id(telegram_id=telegram_id)
-    return UserLog.query.filter_by(user_id=user_id).order_by(UserLog.id.desc()).first().state
+    return UserLog.query.filter_by(user_id=user_id).order_by(UserLog.id.desc()).first()
+
+def update_user_log_user_message(user_log ,message):
+    user_log.user_message = message
+    db.session.commit()
 
 def create_staff_scheduller_task(user_id, staff_id, price):
     task = Scheduller(user_id=user_id, staff_id=staff_id, price=price)
@@ -46,7 +50,7 @@ def generate_main_keyboard():
     return {'item_list': 'Список отслеживаемых предметоф', 'search_item': 'Поиск предмета', 'telegram_id': 'Telegram ID'}
 
 def user_message_processing(telegram_id, message):
-    last_user_log_state = get_last_user_log_state(telegram_id)
+    last_user_log = get_last_user_log(telegram_id)
     if message in ('main_menu', 'start', '/start'):
         add_user_log(telegram_id=telegram_id, state='main_menu')
         return generate_main_keyboard()
@@ -55,7 +59,8 @@ def user_message_processing(telegram_id, message):
         return get_staff_scheduller_list(telegram_id)
     elif message == 'search_item':
         add_user_log(telegram_id=telegram_id, state='search_item')
-
-
-# ('item_lis', 'search_item', 'pick_item', 'set_price', 'delete_item',"
-#                         "'telegram_id', 'pick_price', 'main_menu')"
+        return 'Введите название предмета.'
+    else:
+        if last_user_log.state == 'search_item':
+            update_user_log_user_message(user_log=last_user_log, message=message)
+            return 'Результат поиска.'

@@ -16,8 +16,7 @@ def add_user_log(telegram_id, state):
 
 def get_last_user_log(telegram_id):
     user_id = get_user_id(telegram_id=telegram_id)
-    log =  UserLog.query.filter_by(user_id=user_id).order_by(UserLog.id.desc()).first()
-    db.session.close()
+    log = UserLog.query.filter_by(user_id=user_id).order_by(UserLog.id.desc()).first()
     return log
 
 def update_user_log_user_message(user_log ,message):
@@ -73,11 +72,11 @@ def user_message_processing(telegram_id, message):
         add_user_log(telegram_id=telegram_id, state='telegram_id')
         return 'Ваш telegram_id ' + str(telegram_id)
     else:
-        # if last_user_log.state == 'search_item' and last_user_log.message:
-        #     add_user_log(telegram_id=telegram_id, state='pick_item')
-        #     # update_user_log_user_message(user_log=last_user_log, message=message)
-        #     return 'Введите цену.'
-        if last_user_log.state == 'search_item':
+        if last_user_log.state == 'search_item' and last_user_log.message:
+            add_user_log(telegram_id=telegram_id, state='pick_item')
+            update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
+            return 'Введите цену.'
+        elif last_user_log.state == 'search_item':
             update_user_log_user_message(user_log=last_user_log, message=message)
             return get_items_matching_user_search(message)
         else:

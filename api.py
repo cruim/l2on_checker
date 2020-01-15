@@ -20,6 +20,7 @@ def get_last_user_log(telegram_id):
 def update_user_log_user_message(user_log ,message):
     user_log.user_message = message
     db.session.commit()
+    db.session.c
 
 def create_staff_scheduller_task(user_id, staff_id, price):
     task = Scheduller(user_id=user_id, staff_id=staff_id, price=price)
@@ -66,11 +67,11 @@ def user_message_processing(telegram_id, message):
         add_user_log(telegram_id=telegram_id, state='telegram_id')
         return 'Ваш telegram_id ' + str(telegram_id)
     else:
-        if last_user_log.state == 'search_item' and last_user_log.message:
-            add_user_log(telegram_id=telegram_id, state='pick_item')
-            # update_user_log_user_message(user_log=last_user_log, message=message)
-            return 'Введите цену.'
-        elif last_user_log.state == 'search_item':
+        # if last_user_log.state == 'search_item' and last_user_log.message:
+        #     add_user_log(telegram_id=telegram_id, state='pick_item')
+        #     # update_user_log_user_message(user_log=last_user_log, message=message)
+        #     return 'Введите цену.'
+        if last_user_log.state == 'search_item':
             update_user_log_user_message(user_log=last_user_log, message=message)
             return get_items_matching_user_search(message)
         else:

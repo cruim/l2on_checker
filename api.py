@@ -13,8 +13,9 @@ def add_user_log(telegram_id, state):
     db.session.add(user_log)
     db.session.commit()
 
-def get_last_user_log_state(user_id):
-    return UserLog.query.filter_by(user_id=user_id).order_by(id).first
+def get_last_user_log_state(telegram_id):
+    user_id = get_user_id(telegram_id=telegram_id)
+    return UserLog.query.filter_by(user_id=user_id).order_by(UserLog.id.desc()).first().state
 
 def create_staff_scheduller_task(user_id, staff_id, price):
     task = Scheduller(user_id=user_id, staff_id=staff_id, price=price)

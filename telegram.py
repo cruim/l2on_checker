@@ -55,7 +55,9 @@ def webhook():
 def echo_message(message):
     text_responce = api.user_message_processing(telegram_id=message.chat.id, message=message.text)
     if isinstance(text_responce, dict):
+        bot.send_message(message.chat.id, text_responce or message.text)
         generate_keyboard(keys=text_responce, message='Результат поиска', telegram_id=message.from_user.id)
+        bot.send_message(message.chat.id, text_responce or message.text)
     else:
         bot.send_message(message.chat.id, text_responce or message.text)
 

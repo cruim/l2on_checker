@@ -38,7 +38,7 @@ def generate_search_query_keyboard(user_id, text):
     pass
 
 def generate_main_keyboard():
-    return {'item_list': 'Список отслеживаемых предметов', 'search_item': 'Поиск предмета', 'telegram_id': 'Telegram ID'}
+    return {'item_list': 'Список отслеживаемых предметоф', 'search_item': 'Поиск предмета', 'telegram_id': 'Telegram ID'}
 
 def user_message_processing(user_id, message):
     last_user_log_state = get_last_user_log_state(user_id)

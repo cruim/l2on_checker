@@ -32,7 +32,7 @@ def get_staff_scheduller_list(user_id):
     return staff_list
 
 def get_items_matching_user_search(name):
-    result = tuple(db.session.query(Staff.name, Staff.l2on_id).filter(Staff.name.ilike('%{}%'.format(name))).all())
+    result = tuple(db.session.query(Staff.name, Staff.l2on_id).filter(Staff.name.ilike('%{}%'.format(name))).limit(30).all())
     result = dict((y, x) for x, y in result)
     return result
 
@@ -64,9 +64,12 @@ def user_message_processing(telegram_id, message):
         return 'Введите название предмета.'
     elif message == 'telegram_id':
         add_user_log(telegram_id=telegram_id, state='telegram_id')
-        return 'Твой telegram_id ' + str(telegram_id)
+        return 'Ваш telegram_id ' + str(telegram_id)
     else:
-        if last_user_log.state == 'search_item':
+        if last_user_log.state == 'search_item' and last_user_log.message:
+            add_user_log(telegram_id=telegram_id, state='pick_item', message=message)
+            return 'Введите цену.'
+        elif last_user_log.state == 'search_item':
             update_user_log_user_message(user_log=last_user_log, message=message)
             return get_items_matching_user_search(message)
         else:

@@ -69,6 +69,12 @@ class UserLog(db.Model):
                         name='state_valid_values'),
         {})
 
+class ErrorLog(db.Model):
+    id = Column(Integer, primary_key=True)
+    error_message = Column(String(500))
+    error_location = Column(String(30))
+    user_id = Column(Integer, ForeignKey('user.id'))
+    created_on = Column(DateTime, default=db.func.now())
 
 if __name__ == "__main__":
     app.run()

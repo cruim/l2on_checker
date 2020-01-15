@@ -1,4 +1,4 @@
-from app import db, Scheduller, UserLog, Staff
+from app import db, Scheduller, UserLog, Staff, ErrorLog
 
 
 def delele_scheduller_task(id):
@@ -25,19 +25,26 @@ def get_staff_scheduller_list(user_id):
 def get_items_matching_user_search(name):
     return db.session.query(Staff.name, Staff.l2on_id).filter(Staff.name.ilike('%{}%'.format(name))).all()
 
+def create_error_log(error_location, error_message, user_id):
+    error = ErrorLog(error_location=error_location, error_message=error_message, user_id=user_id)
+    db.session.add(error)
+    db.session.commit()
+
 def send_message_to_user(user_id, text):
     pass
 
+# Поиск предмета
 def generate_search_query_keyboard(user_id, text):
     pass
 
-def generate_main_keyboard(user_id):
-    pass
+def generate_main_keyboard():
+    return {'item_list': 'Список отслеживаемых предметов', 'search_item': 'Поиск предмета', 'telegram_id': 'Telegram ID'}
 
 def user_message_processing(user_id, message):
     last_user_log_state = get_last_user_log_state(user_id)
     if message in ('main_menu', 'start', '/start'):
-        return generate_main_keyboard(user_id)
+        add_user_log(user_id=user_id, state='main_menu')
+        return generate_main_keyboard()
     elif message == 'item_list':
         add_user_log(user_id=user_id, state='item_list')
         return get_staff_scheduller_list(user_id)

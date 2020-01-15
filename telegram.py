@@ -33,7 +33,7 @@ def generate_keyboard(keys, message, telegram_id):
 def send_welcome(message):
     api.add_user_log(telegram_id=message.from_user.id, state='main_menu')
     keys = {'item_list': 'Список отслеживаемых предметов1', 'search_item': 'Поиск предмета', 'telegram_id': 'Telegram ID'}
-    generate_keyboard(keys=keys, message='Main Keyboard', telegram_id=message.from_user.id)
+    generate_keyboard(keys=keys, message=message, telegram_id=message.from_user.id)
 
 # Empty webserver index, return nothing, just http 200
 @app.route('/', methods=['GET', 'HEAD'])

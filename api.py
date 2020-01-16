@@ -79,9 +79,13 @@ def user_message_processing(telegram_id, message):
         elif last_user_log.state == 'search_item':
             update_user_log_user_message(user_log=last_user_log, message=message)
             return get_items_matching_user_search(message)
-        elif last_user_log.state == 'pick_item' and last_user_log.user_message and str(message).isdigit():
-            add_user_log(telegram_id=telegram_id, state='set_price')
-            # добавить строку в планировщик
-            return 'Предмет добавлен список.'
+        elif last_user_log.state == 'pick_item':
+            if last_user_log.user_message and str(message).isdigit():
+                add_user_log(telegram_id=telegram_id, state='set_price')
+                update_user_log_user_message(user_log=last_user_log, message=message)
+                # добавить строку в планировщик
+                return 'Предмет добавлен список.'
+            else:
+                return 'Введите целое число.'
         else:
             return False

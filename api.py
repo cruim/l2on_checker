@@ -107,7 +107,7 @@ def user_message_processing(telegram_id, message):
             return generate_staff_item_keyboard(), get_staff_name_by_id(message)
         elif last_user_log.state == 'item_list' and get_last_user_log(telegram_id=telegram_id).user_message and message == 'delete_item':
             add_user_log(telegram_id=telegram_id, state='delete_item')
-            delele_scheduller_task(staff_id=get_last_user_log(telegram_id=telegram_id).user_message, telegram_id=telegram_id)
-            return 'Предмет был удален из списка отслеживаемых.'
+            # delele_scheduller_task(staff_id=get_last_user_log(telegram_id=telegram_id).user_message, telegram_id=telegram_id)
+            return get_last_user_log(telegram_id=telegram_id).user_message
         else:
             return False

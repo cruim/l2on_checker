@@ -1,6 +1,9 @@
 from app import db, Scheduller, UserLog, Staff, ErrorLog, User
 
 
+def get_staff_id_based_on_l2on_id(l2on_id):
+    return Staff.query.filter_by(l2on_id=l2on_id).first().id
+
 def delele_scheduller_task(id):
     return Scheduller.query.filter_by(id=id).delete()
 
@@ -47,13 +50,6 @@ def create_error_log(error_location, error_message, user_id):
     db.session.commit()
     db.session.close()
 
-def send_message_to_user(user_id, text):
-    pass
-
-# Поиск предмета
-def generate_search_query_keyboard(user_id, text):
-    pass
-
 def generate_main_keyboard():
     return {'item_list': 'Список отслеживаемых предметоф', 'search_item': 'Поиск предмета', 'telegram_id': 'Telegram ID'}
 
@@ -83,7 +79,8 @@ def user_message_processing(telegram_id, message):
             if last_user_log.user_message and str(message).isdigit():
                 add_user_log(telegram_id=telegram_id, state='set_price')
                 update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
-                # добавить строку в планировщик
+                staff_id = get_staff_id_based_on_l2on_id(l2on_id=last_user_log.user_message)
+                create_staff_scheduller_task(get_user_id(telegram_id=telegram_id), staff_id=staff_id, price=message)
                 return 'Предмет добавлен список.'
             else:
                 return 'Введите целое число.'

@@ -101,7 +101,7 @@ def user_message_processing(telegram_id, message):
                 return 'Введите целое число.'
         elif last_user_log.state == 'item_list' and check_message_in_scheduller_list(message=message, telegram_id=telegram_id):
             update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
-            return generate_staff_item_keyboard()
+            return generate_staff_item_keyboard(), get_staff_name_by_id(message)
             # return get_staff_name_by_id(message)
         else:
             return False

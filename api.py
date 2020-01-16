@@ -80,6 +80,7 @@ def user_message_processing(telegram_id, message):
                 add_user_log(telegram_id=telegram_id, state='set_price')
                 update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
                 staff_id = get_staff_id_based_on_l2on_id(l2on_id=last_user_log.user_message)
+                return staff_id
                 create_staff_scheduller_task(get_user_id(telegram_id=telegram_id), staff_id=staff_id, price=message)
                 return 'Предмет добавлен список.'
             else:

@@ -40,7 +40,7 @@ def get_staff_scheduller_list(telegram_id):
     user_id = get_user_id(telegram_id)
     staff_list = tuple(db.session.query(Scheduller.staff_id, Staff.name).join(Staff, Staff.id == Scheduller.staff_id).\
         filter(Scheduller.user_id == user_id).all())
-    staff_list = dict((y, x) for x, y in staff_list)
+    staff_list = dict((x, y) for x, y in staff_list)
     return staff_list
 
 def get_items_matching_user_search(name):

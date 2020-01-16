@@ -11,8 +11,11 @@ def check_message_in_scheduller_list(message, telegram_id):
 def get_staff_id_based_on_l2on_id(l2on_id):
     return Staff.query.filter_by(l2on_id=l2on_id).first().id
 
-def delele_scheduller_task(id):
-    return Scheduller.query.filter_by(id=id).delete()
+def delele_scheduller_task(staff_id, telegram_id):
+    user_id = get_user_id(telegram_id=telegram_id)
+    Scheduller.query.filter_by(staff_id=staff_id, user_id=user_id).delete()
+    db.session.commit()
+    db.session.close()
 
 def get_user_id(telegram_id):
     return User.query.filter_by(telegram_id=telegram_id).first().id
@@ -62,7 +65,7 @@ def create_error_log(error_location, error_message, user_id):
     db.session.close()
 
 def generate_main_keyboard():
-    return {'item_list': 'Список отслеживаемых предметоф', 'search_item': 'Поиск предмета', 'telegram_id': 'Telegram ID'}
+    return {'item_list': 'Список отслеживаемых предметов', 'search_item': 'Поиск предмета', 'telegram_id': 'Telegram ID'}
 
 def generate_staff_item_keyboard():
     return {'delete_item': 'Удалить', '/start': 'Главное меню'}
@@ -102,5 +105,9 @@ def user_message_processing(telegram_id, message):
         elif last_user_log.state == 'item_list' and check_message_in_scheduller_list(message=message, telegram_id=telegram_id):
             update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
             return generate_staff_item_keyboard(), get_staff_name_by_id(message)
+        elif last_user_log.state == 'item_list' and get_last_user_log(telegram_id=telegram_id).user_message and message == 'delete_item':
+            add_user_log(telegram_id=telegram_id, state='delete_item')
+            delele_scheduller_task(staff_id=get_last_user_log(telegram_id=telegram_id).user_message, telegram_id=telegram_id)
+            return 'Предмет был удален из списка отслеживаемых.'
         else:
             return False

@@ -82,7 +82,7 @@ def user_message_processing(telegram_id, message):
             if last_user_log.user_message and str(message).isdigit():
                 add_user_log(telegram_id=telegram_id, state='set_price')
                 update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
-                staff_id = get_staff_id_based_on_l2on_id(l2on_id=get_last_user_log(telegram_id=telegram_id, state='pick_price'))
+                staff_id = get_staff_id_based_on_l2on_id(l2on_id=get_last_user_log(telegram_id=telegram_id, state='pick_item').user_message)
                 create_staff_scheduller_task(get_user_id(telegram_id=telegram_id), staff_id=staff_id, price=message)
                 return 'Предмет добавлен список.'
             else:

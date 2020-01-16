@@ -1,6 +1,9 @@
 from app import db, Scheduller, UserLog, Staff, ErrorLog, User
 
 
+def get_staff_name_by_id(id):
+    return Staff.query.filter_by(id=id).first().name
+
 def check_message_in_scheduller_list(message, telegram_id):
     user_id = get_user_id(telegram_id=telegram_id)
     return Scheduller.query.filter_by(staff_id=message, user_id=user_id).first()
@@ -69,7 +72,7 @@ def user_message_processing(telegram_id, message):
         return generate_main_keyboard()
     elif message == 'item_list':
         add_user_log(telegram_id=telegram_id, state='item_list')
-        return get_staff_scheduller_list(telegram_id)
+        return get_staff_scheduller_list(telegram_id), 'Список отслеживаемых предметов.'
     elif message == 'search_item':
         add_user_log(telegram_id=telegram_id, state='search_item')
         return 'Введите название предмета.'
@@ -95,5 +98,6 @@ def user_message_processing(telegram_id, message):
                 return 'Введите целое число.'
         elif last_user_log.state == 'item_list' and check_message_in_scheduller_list(message=message, telegram_id=telegram_id):
             update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
+            return get_staff_name_by_id(message)
         else:
             return False

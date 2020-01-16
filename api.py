@@ -17,9 +17,12 @@ def add_user_log(telegram_id, state):
     db.session.commit()
     db.session.close()
 
-def get_last_user_log(telegram_id):
+def get_last_user_log(telegram_id, state=False):
     user_id = get_user_id(telegram_id=telegram_id)
-    log = UserLog.query.filter_by(user_id=user_id).order_by(UserLog.id.desc()).first()
+    if state:
+        log = UserLog.query.filter_by(user_id=user_id, state=state).order_by(UserLog.id.desc()).first()
+    else:
+        log = UserLog.query.filter_by(user_id=user_id).order_by(UserLog.id.desc()).first()
     return log
 
 def update_user_log_user_message(user_log ,message):
@@ -79,8 +82,7 @@ def user_message_processing(telegram_id, message):
             if last_user_log.user_message and str(message).isdigit():
                 add_user_log(telegram_id=telegram_id, state='set_price')
                 update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
-                staff_id = get_staff_id_based_on_l2on_id(l2on_id=last_user_log.user_message)
-                return staff_id
+                staff_id = get_staff_id_based_on_l2on_id(l2on_id=get_last_user_log(telegram_id=telegram_id, state='pick_price'))
                 create_staff_scheduller_task(get_user_id(telegram_id=telegram_id), staff_id=staff_id, price=message)
                 return 'Предмет добавлен список.'
             else:

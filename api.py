@@ -1,6 +1,10 @@
 from app import db, Scheduller, UserLog, Staff, ErrorLog, User
 
 
+def check_message_in_scheduller_list(message, telegram_id):
+    user_id = get_user_id(telegram_id=telegram_id)
+    return Scheduller.query.filter_by(staff_id=message, user_id=user_id).first()
+
 def get_staff_id_based_on_l2on_id(l2on_id):
     return Staff.query.filter_by(l2on_id=l2on_id).first().id
 
@@ -89,5 +93,7 @@ def user_message_processing(telegram_id, message):
                 return 'Предмет добавлен список.'
             else:
                 return 'Введите целое число.'
+        elif last_user_log.state == 'item_list' and check_message_in_scheduller_list(message=message, telegram_id=telegram_id):
+            update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
         else:
             return False

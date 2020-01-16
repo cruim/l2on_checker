@@ -72,7 +72,7 @@ def user_message_processing(telegram_id, message):
         return generate_main_keyboard()
     elif message == 'item_list':
         add_user_log(telegram_id=telegram_id, state='item_list')
-        return get_staff_scheduller_list(telegram_id), 'Список отслеживаемых предметов.'
+        return get_staff_scheduller_list(telegram_id)
     elif message == 'search_item':
         add_user_log(telegram_id=telegram_id, state='search_item')
         return 'Введите название предмета.'

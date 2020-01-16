@@ -63,9 +63,8 @@ def echo_message(message):
 def callback_inline(call):
     if call.message:
         text_responce = api.user_message_processing(telegram_id=call.message.chat.id, message=call.data)
-        keys = text_responce[0]
         if isinstance(text_responce, dict):
-            generate_keyboard(keys=keys, message='text_responce', telegram_id=call.message.chat.id)
+            generate_keyboard(keys=text_responce, message='text_responce', telegram_id=call.message.chat.id)
         else:
             bot.send_message(call.message.chat.id, text_responce)
 

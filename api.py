@@ -36,14 +36,15 @@ def create_staff_scheduller_task(user_id, staff_id, price):
     db.session.commit()
     db.session.close()
 
-def get_staff_scheduller_list(user_id):
-    staff_list = db.session.query(Scheduller.staff_id, Staff.name).join(Staff, Staff.id == Scheduller.staff_id).\
-        filter_by(Scheduller.user_id == user_id).all()
+def get_staff_scheduller_list(telegram_id):
+    user_id = get_user_id(telegram_id)
+    staff_list = tuple(db.session.query(Scheduller.staff_id, Staff.name).join(Staff, Staff.id == Scheduller.staff_id).\
+        filter(Scheduller.user_id == user_id).all())
+    staff_list = dict((x, y) for x, y in staff_list)
     return staff_list
 
 def get_items_matching_user_search(name):
     result = tuple(db.session.query(Staff.name, Staff.l2on_id).filter(Staff.name.ilike('%{}%'.format(name))).limit(30).all())
-    db.session.close()
     result = dict((y, x) for x, y in result)
     return result
 
@@ -56,6 +57,7 @@ def create_error_log(error_location, error_message, user_id):
 def generate_main_keyboard():
     return {'item_list': 'Список отслеживаемых предметоф', 'search_item': 'Поиск предмета', 'telegram_id': 'Telegram ID'}
 
+# TODO: Refactor this
 def user_message_processing(telegram_id, message):
     last_user_log = get_last_user_log(telegram_id)
     if message in ('main_menu', 'start', '/start'):

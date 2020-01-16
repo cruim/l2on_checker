@@ -63,7 +63,10 @@ def echo_message(message):
 def callback_inline(call):
     if call.message:
         text_responce = api.user_message_processing(telegram_id=call.message.chat.id, message=call.data)
-        bot.send_message(call.message.chat.id, text_responce)
+        if isinstance(text_responce, dict):
+            generate_keyboard(keys=text_responce, message='Результат поиска', telegram_id=call.message.chat.id)
+        else:
+            bot.send_message(call.message.chat.id, text_responce)
 
 
 app.run(host=WEBHOOK_LISTEN,

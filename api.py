@@ -72,7 +72,7 @@ def user_message_processing(telegram_id, message):
     last_user_log = get_last_user_log(telegram_id)
     if message in ('main_menu', 'start', '/start'):
         add_user_log(telegram_id=telegram_id, state='main_menu')
-        return generate_main_keyboard()
+        return generate_main_keyboard(), 'Главное меню.'
     elif message == 'item_list':
         add_user_log(telegram_id=telegram_id, state='item_list')
         return get_staff_scheduller_list(telegram_id), 'Список предметов.'

@@ -32,7 +32,7 @@ def generate_keyboard(keys, message, telegram_id):
 @bot.message_handler(commands=['start', 'help', 'test'])
 def send_welcome(message):
     keys = api.user_message_processing(telegram_id=message.from_user.id, message=message.text)
-    generate_keyboard(keys=keys, message='Main Keyboard', telegram_id=message.from_user.id)
+    generate_keyboard(keys=keys[0], message=keys[1], telegram_id=message.from_user.id)
 
 # Empty webserver index, return nothing, just http 200
 @app.route('/', methods=['GET', 'HEAD'])

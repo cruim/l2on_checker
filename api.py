@@ -102,7 +102,7 @@ def user_message_processing(telegram_id, message):
                 return 'Предмет добавлен список.'
             else:
                 return 'Введите целое число.'
-        elif last_user_log.state == 'item_list' and isinstance(message, int) and check_message_in_scheduller_list(message=message, telegram_id=telegram_id):
+        elif last_user_log.state == 'item_list' and str(message).isdigit() and check_message_in_scheduller_list(message=message, telegram_id=telegram_id):
             update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
             return generate_staff_item_keyboard(), get_staff_name_by_id(message)
         elif last_user_log.state == 'item_list' and get_last_user_log(telegram_id=telegram_id).user_message and message == 'delete_item':

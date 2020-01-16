@@ -82,7 +82,7 @@ def user_message_processing(telegram_id, message):
         elif last_user_log.state == 'pick_item':
             if last_user_log.user_message and str(message).isdigit():
                 add_user_log(telegram_id=telegram_id, state='set_price')
-                update_user_log_user_message(user_log=last_user_log, message=message)
+                update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
                 # добавить строку в планировщик
                 return 'Предмет добавлен список.'
             else:

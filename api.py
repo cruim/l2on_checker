@@ -66,7 +66,7 @@ def get_last_user_log(telegram_id, state=False):
 def update_user_log_user_message(user_log ,message):
     user_log.user_message = message
     db.session.commit()
-    close_dispose_connection()
+    # close_dispose_connection()
 
 def create_staff_scheduller_task(user_id, staff_id, price, game_server_id):
     task = Scheduller(user_id=user_id, staff_id=staff_id, price=price, game_server_id=game_server_id)

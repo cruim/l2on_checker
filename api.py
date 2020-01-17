@@ -56,11 +56,13 @@ def get_staff_scheduller_list(telegram_id):
     staff_list = tuple(db.session.query(Scheduller.staff_id, db.func.concat(Staff.name, ' ', Scheduller.price)).
                        join(Staff, Staff.id == Scheduller.staff_id).filter(Scheduller.user_id == user_id).all())
     staff_list = dict((x, y) for x, y in staff_list)
+    staff_list['/start'] = 'Главное меню'
     return staff_list
 
 def get_items_matching_user_search(name):
     result = tuple(db.session.query(Staff.name, Staff.l2on_id).filter(Staff.name.ilike('%{}%'.format(name))).limit(30).all())
     result = dict((y, x) for x, y in result)
+    result['/start'] = 'Главное меню'
     return result
 
 def create_error_log(error_location, error_message, user_id):

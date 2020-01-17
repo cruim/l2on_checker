@@ -14,18 +14,18 @@ def update_scheduller_is_active(scheduller_id):
 
 def check_access(telegram_id):
     access = User.query.filter_by(telegram_id=telegram_id).first()
-    close_dispose_connection()
+    # close_dispose_connection()
     return True if access else False
 
 def check_schduller_limit(telegram_id):
     user_id = get_user_id(telegram_id=telegram_id)
     current_count = db.session.query(Scheduller.id).filter_by(user_id=user_id).count()
-    close_dispose_connection()
+    # close_dispose_connection()
     return True if current_count < 15 else False
 
 def get_staff_name_by_id(id):
     result = Staff.query.filter_by(id=id).first().name
-    close_dispose_connection()
+    # close_dispose_connection()
     return result
 
 def check_message_in_scheduller_list(message, telegram_id):
@@ -36,13 +36,12 @@ def check_message_in_scheduller_list(message, telegram_id):
 
 def get_staff_id_based_on_l2on_id(l2on_id):
     result = Staff.query.filter_by(l2on_id=l2on_id).first().id
-    close_dispose_connection()
+    # close_dispose_connection()
     return result
 
 def delele_scheduller_task(staff_id, telegram_id):
     user_id = get_user_id(telegram_id=telegram_id)
     Scheduller.query.filter_by(staff_id=staff_id, user_id=user_id).delete()
-    db.session.commit()
     close_dispose_connection()
 
 def get_user_id(telegram_id):

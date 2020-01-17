@@ -55,8 +55,8 @@ def update_user_log_user_message(user_log ,message):
     db.session.commit()
     db.session.close()
 
-def create_staff_scheduller_task(user_id, staff_id, price):
-    task = Scheduller(user_id=user_id, staff_id=staff_id, price=price)
+def create_staff_scheduller_task(user_id, staff_id, price, game_server_id):
+    task = Scheduller(user_id=user_id, staff_id=staff_id, price=price, game_server_id=game_server_id)
     db.session.add(task)
     db.session.commit()
     db.session.close()
@@ -120,14 +120,14 @@ def user_message_processing(telegram_id, message):
             else:
                 return 'Превышен лимит отслеживаемых предметов.'
         elif last_user_log.state == 'pick_item' and last_user_log.user_message and str(message).isdigit():
-            return get_game_server_keyboard()
+            staff_id = get_staff_id_based_on_l2on_id(l2on_id=last_user_log.user_message)
+            create_staff_scheduller_task(user_id=get_user_id(telegram_id=telegram_id), staff_id=staff_id, price=message, game_server_id=message)
+            return 'Предмет добавлен список.'
         elif last_user_log.state == 'pick_item':
             if last_user_log.user_message and str(message).isdigit():
                 add_user_log(telegram_id=telegram_id, state='set_price')
                 update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
-                # staff_id = get_staff_id_based_on_l2on_id(l2on_id=get_last_user_log(telegram_id=telegram_id, state='pick_item').user_message)
-                # create_staff_scheduller_task(get_user_id(telegram_id=telegram_id), staff_id=staff_id, price=message)
-                return 'Предмет добавлен список.'
+                return get_game_server_keyboard(), 'Выберите сервер.'
             else:
                 return 'Введите целое число.'
         elif last_user_log.state == 'item_list' and str(message).isdigit() and check_message_in_scheduller_list(message=message, telegram_id=telegram_id):

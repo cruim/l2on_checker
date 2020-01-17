@@ -1,6 +1,11 @@
 from app import db, Scheduller, UserLog, Staff, ErrorLog, User
 
 
+def check_schduller_limit(telegram_id):
+    user_id = get_user_id(telegram_id=telegram_id)
+    current_count = db.session.query(Scheduller.id).filter_by(user_id=user_id).count()
+    return True if current_count <= 2 else False
+
 def get_staff_name_by_id(id):
     return Staff.query.filter_by(id=id).first().name
 
@@ -91,8 +96,11 @@ def user_message_processing(telegram_id, message):
             update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
             return 'Введите цену.'
         elif last_user_log.state == 'search_item':
-            update_user_log_user_message(user_log=last_user_log, message=message)
-            return get_items_matching_user_search(message), 'Результат поиска.'
+            if check_schduller_limit(telegram_id=telegram_id):
+                update_user_log_user_message(user_log=last_user_log, message=message)
+                return get_items_matching_user_search(message), 'Результат поиска.'
+            else:
+                return 'Превышен лимит отслеживаемых предметов.'
         elif last_user_log.state == 'pick_item':
             if last_user_log.user_message and str(message).isdigit():
                 add_user_log(telegram_id=telegram_id, state='set_price')

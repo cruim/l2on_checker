@@ -42,6 +42,7 @@ def get_staff_id_based_on_l2on_id(l2on_id):
 def delele_scheduller_task(staff_id, telegram_id):
     user_id = get_user_id(telegram_id=telegram_id)
     Scheduller.query.filter_by(staff_id=staff_id, user_id=user_id).delete()
+    db.session.commit()
     close_dispose_connection()
 
 def get_user_id(telegram_id):
@@ -131,7 +132,7 @@ def user_message_processing(telegram_id, message):
         elif last_user_log.state == 'search_item':
             if check_schduller_limit(telegram_id=telegram_id):
                 update_user_log_user_message(user_log=last_user_log, message=message)
-                return get_items_matching_user_search(message), 'Результат поиска.' + message
+                return get_items_matching_user_search(message), 'Результат поиска.'
             else:
                 return 'Превышен лимит отслеживаемых предметов.'
         elif last_user_log.state == 'set_price' and last_user_log.user_message and str(message).isdigit():
@@ -150,7 +151,7 @@ def user_message_processing(telegram_id, message):
             update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
             return generate_staff_item_keyboard(), get_staff_name_by_id(message)
         elif last_user_log.state == 'item_list' and get_last_user_log(telegram_id=telegram_id).user_message and message == 'delete_item':
-            delele_scheduller_task(staff_id=get_last_user_log(telegram_id=telegram_id).user_message, telegram_id=telegram_id)
+            delele_scheduller_task(staff_id=last_user_log.user_message, telegram_id=telegram_id)
             add_user_log(telegram_id=telegram_id, state='delete_item')
             return 'Предмет был удален из списка отслеживаемых.'
         else:

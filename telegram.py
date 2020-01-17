@@ -31,8 +31,11 @@ def generate_keyboard(keys, message, telegram_id):
 
 @bot.message_handler(commands=['start', 'help', 'test'])
 def send_welcome(message):
-    keys = api.user_message_processing(telegram_id=message.from_user.id, message=message.text)
-    generate_keyboard(keys=keys[0], message=keys[1], telegram_id=message.from_user.id)
+    if api.check_access(telegram_id=message.from_user.id):
+        keys = api.user_message_processing(telegram_id=message.from_user.id, message=message.text)
+        generate_keyboard(keys=keys[0], message=keys[1], telegram_id=message.from_user.id)
+    else:
+        bot.send_message(message.chat.id, 'Access denied')
 
 # Empty webserver index, return nothing, just http 200
 @app.route('/', methods=['GET', 'HEAD'])
@@ -53,15 +56,18 @@ def webhook():
 # Handle all other messages
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
-    text_responce = api.user_message_processing(telegram_id=message.chat.id, message=message.text)
-    if isinstance(text_responce, tuple):
-        generate_keyboard(keys=text_responce[0], message=text_responce[1], telegram_id=message.from_user.id)
+    if api.check_access(telegram_id=message.from_user.id):
+        text_responce = api.user_message_processing(telegram_id=message.chat.id, message=message.text)
+        if isinstance(text_responce, tuple):
+            generate_keyboard(keys=text_responce[0], message=text_responce[1], telegram_id=message.from_user.id)
+        else:
+            bot.send_message(message.chat.id, text_responce or message.text)
     else:
-        bot.send_message(message.chat.id, text_responce or message.text)
+        bot.send_message(message.chat.id, 'Access denied')
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):
-    if call.message:
+    if call.message and api.check_access(telegram_id=call.message.chat.id):
         text_responce = api.user_message_processing(telegram_id=call.message.chat.id, message=call.data)
         if isinstance(text_responce, tuple):
             generate_keyboard(keys=text_responce[0], message=text_responce[1], telegram_id=call.message.chat.id)

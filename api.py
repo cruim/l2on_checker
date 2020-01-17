@@ -1,6 +1,9 @@
 from app import db, Scheduller, UserLog, Staff, ErrorLog, User
 
 
+def check_access(telegram_id):
+    return True if User.query.filter_by(telegram_id=telegram_id).first() else False
+
 def check_schduller_limit(telegram_id):
     user_id = get_user_id(telegram_id=telegram_id)
     current_count = db.session.query(Scheduller.id).filter_by(user_id=user_id).count()

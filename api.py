@@ -4,7 +4,7 @@ from app import db, Scheduller, UserLog, Staff, ErrorLog, User
 def check_schduller_limit(telegram_id):
     user_id = get_user_id(telegram_id=telegram_id)
     current_count = db.session.query(Scheduller.id).filter_by(user_id=user_id).count()
-    return True if current_count <= 2 else False
+    return True if current_count < 15 else False
 
 def get_staff_name_by_id(id):
     return Staff.query.filter_by(id=id).first().name
@@ -53,8 +53,8 @@ def create_staff_scheduller_task(user_id, staff_id, price):
 
 def get_staff_scheduller_list(telegram_id):
     user_id = get_user_id(telegram_id)
-    staff_list = tuple(db.session.query(Scheduller.staff_id, Staff.name).join(Staff, Staff.id == Scheduller.staff_id).\
-        filter(Scheduller.user_id == user_id).all())
+    staff_list = tuple(db.session.query(Scheduller.staff_id, db.func.concat(Staff.name, ' ', Scheduller.price)).
+                       join(Staff, Staff.id == Scheduller.staff_id).filter(Scheduller.user_id == user_id).all())
     staff_list = dict((x, y) for x, y in staff_list)
     return staff_list
 

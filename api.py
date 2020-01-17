@@ -76,7 +76,7 @@ def get_items_matching_user_search(name):
     return result
 
 def get_game_server_keyboard():
-    result = db.session.query(GameServer.name, GameServer.l2on_id).all()
+    result = db.session.query(GameServer.name, GameServer.id).all()
     result = dict((y, x) for x, y in result)
     result['/start'] = 'Главное меню'
     return result

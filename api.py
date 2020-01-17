@@ -131,7 +131,7 @@ def user_message_processing(telegram_id, message):
         elif last_user_log.state == 'search_item':
             if check_schduller_limit(telegram_id=telegram_id):
                 update_user_log_user_message(user_log=last_user_log, message=message)
-                return get_items_matching_user_search(message), 'Результат поиска.'
+                return get_items_matching_user_search(message), 'Результат поиска.' + message
             else:
                 return 'Превышен лимит отслеживаемых предметов.'
         elif last_user_log.state == 'set_price' and last_user_log.user_message and str(message).isdigit():

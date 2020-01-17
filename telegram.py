@@ -73,6 +73,8 @@ def callback_inline(call):
             generate_keyboard(keys=text_responce[0], message=text_responce[1], telegram_id=call.message.chat.id)
         else:
             bot.send_message(call.message.chat.id, text_responce)
+    else:
+        bot.send_message(call.message.chat.id, 'Access denied')
 
 
 app.run(host=WEBHOOK_LISTEN,

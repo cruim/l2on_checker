@@ -37,6 +37,7 @@ class Scheduller(db.Model):
     id = Column(Integer, primary_key=True)
     user_id = Column(Integer, ForeignKey('user.id'))
     staff_id = Column(Integer, ForeignKey('staff.id'))
+    game_server_id = Column(Integer, ForeignKey('game_server.id'), default=1)
     price = Column(Integer, nullable=False)
     is_active = Column(Boolean, default=True)
     created_on = Column(DateTime, default=db.func.now())

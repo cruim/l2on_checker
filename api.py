@@ -1,6 +1,13 @@
 from app import db, Scheduller, UserLog, Staff, ErrorLog, User
 
 
+def update_scheduller_is_active(scheduller_id):
+    result = Scheduller.query.filter_by(id=scheduller_id).first()
+    result.is_active = not result.is_active
+    db.session.add(result)
+    db.session.commit()
+    db.session.close()
+
 def check_access(telegram_id):
     return True if User.query.filter_by(telegram_id=telegram_id).first() else False
 

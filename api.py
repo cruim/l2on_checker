@@ -119,8 +119,7 @@ def user_message_processing(telegram_id, message):
                 return get_items_matching_user_search(message), 'Результат поиска.'
             else:
                 return 'Превышен лимит отслеживаемых предметов.'
-        elif last_user_log.state == 'set_price' and not last_user_log.user_message and str(message).isdigit():
-                # update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
+        elif last_user_log.state == 'set_price' and last_user_log.user_message and str(message).isdigit():
                 staff_id = get_staff_id_based_on_l2on_id(l2on_id=last_user_log.user_message)
                 create_staff_scheduller_task(user_id=get_user_id(telegram_id=telegram_id),
                                              staff_id=staff_id, price=get_last_user_log(telegram_id).user_message, game_server_id=message)

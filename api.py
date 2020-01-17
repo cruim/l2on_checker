@@ -1,4 +1,4 @@
-from app import db, Scheduller, UserLog, Staff, ErrorLog, User
+from app import db, Scheduller, UserLog, Staff, ErrorLog, User, GameServer
 
 
 def update_scheduller_is_active(scheduller_id):
@@ -75,6 +75,12 @@ def get_items_matching_user_search(name):
     result['/start'] = 'Главное меню'
     return result
 
+def get_game_server_keyboard():
+    result = GameServer.query(GameServer.name, GameServer.l2on_id).all()
+    result = dict((y, x) for x, y in result)
+    result['/start'] = 'Главное меню'
+    return result
+
 def create_error_log(error_location, error_message, user_id):
     error = ErrorLog(error_location=error_location, error_message=error_message, user_id=user_id)
     db.session.add(error)
@@ -113,12 +119,14 @@ def user_message_processing(telegram_id, message):
                 return get_items_matching_user_search(message), 'Результат поиска.'
             else:
                 return 'Превышен лимит отслеживаемых предметов.'
+        elif last_user_log.state == 'pick_item' and last_user_log.user_message and str(message).isdigit():
+            return get_game_server_keyboard()
         elif last_user_log.state == 'pick_item':
             if last_user_log.user_message and str(message).isdigit():
                 add_user_log(telegram_id=telegram_id, state='set_price')
                 update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
-                staff_id = get_staff_id_based_on_l2on_id(l2on_id=get_last_user_log(telegram_id=telegram_id, state='pick_item').user_message)
-                create_staff_scheduller_task(get_user_id(telegram_id=telegram_id), staff_id=staff_id, price=message)
+                # staff_id = get_staff_id_based_on_l2on_id(l2on_id=get_last_user_log(telegram_id=telegram_id, state='pick_item').user_message)
+                # create_staff_scheduller_task(get_user_id(telegram_id=telegram_id), staff_id=staff_id, price=message)
                 return 'Предмет добавлен список.'
             else:
                 return 'Введите целое число.'

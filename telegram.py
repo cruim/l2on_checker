@@ -40,7 +40,7 @@ def send_welcome(message):
 # Empty webserver index, return nothing, just http 200
 @app.route('/', methods=['GET', 'HEAD'])
 def index():
-    return '1'
+    return 'ggwphf'
 
 # Process webhook calls
 @app.route(WEBHOOK_URL_PATH, methods=['POST'])

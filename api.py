@@ -61,7 +61,6 @@ def get_last_user_log(telegram_id, state=False):
         log = UserLog.query.filter_by(user_id=user_id, state=state).order_by(UserLog.id.desc()).first()
     else:
         log = UserLog.query.filter_by(user_id=user_id).order_by(UserLog.id.desc()).first()
-    close_dispose_connection()
     return log
 
 def update_user_log_user_message(user_log ,message):

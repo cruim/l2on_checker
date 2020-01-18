@@ -1,9 +1,38 @@
 from app import db, Scheduller, UserLog, Staff, ErrorLog, User, GameServer
+import requests
+from bs4 import BeautifulSoup
+
+
+def request_response_processing(task):
+    staff = get_staff(task.l2on_id)
+    url = build_l2on_url(id=staff.l2on_id)
+    req = requests.get(url=url[0], headers=url[1])
+    soup = BeautifulSoup(req.text)
+    for tr in soup.find_all('tr'):
+        date = tr.find('span')
+        if date and date.text and "минут" in date.text:
+            price = tr.find('td', {"class": "right"})
+            staff_name = staff.name
+            result_string = " ".join([(date.text if date else ''), staff_name, price.text.replace(" ", "") if price else '']).strip()
+            return result_string
+    return False
+
+
+def build_l2on_url(id, task):
+    world = get_game_server(task.game_server_id)
+    url = "http://l2on.net/?c=market&a=item&id=" + str(id)
+    headers= {"Cookie": "world=" + str(world)}
+    return url, headers
+
+
+def get_game_server(id):
+    return GameServer.query.filter_by(id=id).first()
 
 
 def close_dispose_connection():
     db.session.close()
     db.engine.dispose()
+
 
 def update_scheduller_is_active(scheduller_id):
     result = Scheduller.query.filter_by(id=scheduller_id).first()
@@ -11,41 +40,49 @@ def update_scheduller_is_active(scheduller_id):
     db.session.add(result)
     db.session.commit()
 
+
 def check_access(telegram_id):
     access = User.query.filter_by(telegram_id=telegram_id).first()
     return True if access else False
+
 
 def check_schduller_limit(telegram_id):
     user_id = get_user_id(telegram_id=telegram_id)
     current_count = db.session.query(Scheduller.id).filter_by(user_id=user_id).count()
     return True if current_count < 15 else False
 
-def get_staff_name_by_id(id):
-    result = Staff.query.filter_by(id=id).first().name
-    return result
+
+def get_staff(id):
+    return Staff.query.filter_by(id=id).first()
+
 
 def check_message_in_scheduller_list(message, telegram_id):
     user_id = get_user_id(telegram_id=telegram_id)
     result = Scheduller.query.filter_by(staff_id=message, user_id=user_id).first()
     return result
 
+
 def get_staff_id_based_on_l2on_id(l2on_id):
     result = Staff.query.filter_by(l2on_id=l2on_id).first().id
     return result
+
 
 def delele_scheduller_task(staff_id, telegram_id):
     user_id = get_user_id(telegram_id=telegram_id)
     Scheduller.query.filter_by(staff_id=staff_id, user_id=user_id).delete()
     db.session.commit()
 
+
 def get_user_id(telegram_id):
     return User.query.filter_by(telegram_id=telegram_id).first().id
+
 
 def add_user_log(telegram_id, state):
     user_id = get_user_id(telegram_id=telegram_id)
     user_log = UserLog(user_id=user_id, state=state)
     db.session.add(user_log)
     db.session.commit()
+
 
 def get_last_user_log(telegram_id, state=False):
     user_id = get_user_id(telegram_id=telegram_id)
@@ -55,14 +92,17 @@ def get_last_user_log(telegram_id, state=False):
         log = UserLog.query.filter_by(user_id=user_id).order_by(UserLog.id.desc()).first()
     return log
 
+
 def update_user_log_user_message(user_log ,message):
     user_log.user_message = message
     db.session.commit()
+
 
 def create_staff_scheduller_task(user_id, staff_id, price, game_server_id):
     task = Scheduller(user_id=user_id, staff_id=staff_id, price=price, game_server_id=game_server_id)
     db.session.add(task)
     db.session.commit()
+
 
 def get_staff_scheduller_list(telegram_id):
     user_id = get_user_id(telegram_id)
@@ -71,6 +111,7 @@ def get_staff_scheduller_list(telegram_id):
     staff_list = dict((x, y) for x, y in staff_list)
     staff_list['/start'] = 'Главное меню'
     return staff_list
+
 
 def get_items_matching_user_search(name):
     result = tuple(db.session.query(Staff.name, Staff.l2on_id).filter(Staff.name.ilike('%{}%'.format(name))).limit(30).all())
@@ -84,16 +125,20 @@ def get_game_server_keyboard():
     result['/start'] = 'Главное меню'
     return result
 
+
 def create_error_log(error_location, error_message, user_id):
     error = ErrorLog(error_location=error_location, error_message=error_message, user_id=user_id)
     db.session.add(error)
     db.session.commit()
 
+
 def generate_main_keyboard():
     return {'item_list': 'Список отслеживаемых предметов', 'search_item': 'Поиск предмета', 'telegram_id': 'Telegram ID'}
 
+
 def generate_staff_item_keyboard():
     return {'delete_item': 'Удалить', '/start': 'Главное меню'}
+
 
 # TODO: Refactor this
 def user_message_processing(telegram_id, message):
@@ -135,7 +180,7 @@ def user_message_processing(telegram_id, message):
                 result = 'Введите целое число.'
         elif last_user_log.state == 'item_list' and str(message).isdigit() and check_message_in_scheduller_list(message=message, telegram_id=telegram_id):
             update_user_log_user_message(user_log=get_last_user_log(telegram_id), message=message)
-            result = generate_staff_item_keyboard(), get_staff_name_by_id(message)
+            result = generate_staff_item_keyboard(), get_staff(message).name
         elif last_user_log.state == 'item_list' and get_last_user_log(telegram_id=telegram_id).user_message and message == 'delete_item':
             delele_scheduller_task(staff_id=last_user_log.user_message, telegram_id=telegram_id)
             add_user_log(telegram_id=telegram_id, state='delete_item')

@@ -23,6 +23,7 @@ bot = telebot.TeleBot(API_TOKEN)
 
 app = flask.Flask(__name__)
 
+
 def generate_keyboard(keys, message, telegram_id):
     keyboard = telebot.types.InlineKeyboardMarkup()
     for key, value in keys.items():
@@ -37,10 +38,12 @@ def send_welcome(message):
     # else:
     #     bot.send_message(message.chat.id, 'Access denied')
 
+
 # Empty webserver index, return nothing, just http 200
 @app.route('/', methods=['GET', 'HEAD'])
 def index():
     return 'ggwphf'
+
 
 # Process webhook calls
 @app.route(WEBHOOK_URL_PATH, methods=['POST'])
@@ -53,6 +56,7 @@ def webhook():
     else:
         flask.abort(403)
 
+
 # Handle all other messages
 @bot.message_handler(func=lambda message: True, content_types=['text'])
 def echo_message(message):
@@ -64,6 +68,7 @@ def echo_message(message):
             bot.send_message(message.chat.id, text_responce or message.text)
     else:
         bot.send_message(message.chat.id, 'Access denied')
+
 
 @bot.callback_query_handler(func=lambda call: True)
 def callback_inline(call):

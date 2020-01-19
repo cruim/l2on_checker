@@ -1,22 +1,4 @@
 from app import db, Scheduller, UserLog, Staff, ErrorLog, User, GameServer
-import requests
-from bs4 import BeautifulSoup
-
-
-def request_response_processing(task):
-    staff = get_staff(task.staff_id)
-    url = build_l2on_url(id=staff.l2on_id, task=task)
-    req = requests.get(url=url[0], headers=url[1])
-    soup = BeautifulSoup(req.text)
-    for tr in soup.find_all('tr'):
-        date = tr.find_all('span')
-        date = date[1] if date and len(date) > 1 else False
-        if date and date.text and "минут" in date.text:
-            price = tr.find('td', {"class": "right"}).text.replace(" ", "")
-            print(price, task.price)
-            if int(price) <= task.price:
-                return ' '.join([date.text, price])
-    return False
 
 
 def build_l2on_url(id, task):
@@ -24,6 +6,10 @@ def build_l2on_url(id, task):
     url = "http://l2on.net/?c=market&a=item&id=" + str(id)
     headers = {"Cookie": "world=" + str(world)}
     return url, headers
+
+
+def get_user(id):
+    return User.query.filter_by(id=id).first()
 
 
 def get_game_server(id):
@@ -35,10 +21,9 @@ def close_dispose_connection():
     db.engine.dispose()
 
 
-def update_scheduller_is_active(scheduller_id):
-    result = Scheduller.query.filter_by(id=scheduller_id).first()
-    result.is_active = not result.is_active
-    db.session.add(result)
+def update_scheduller_is_active(scheduller):
+    scheduller.is_active = not scheduller.is_active
+    db.session.add(scheduller)
     db.session.commit()
 
 

@@ -1,6 +1,6 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import Integer, String, ForeignKey, Column, Boolean, DateTime, CheckConstraint, func
+from sqlalchemy import Integer, String, ForeignKey, Column, Boolean, DateTime, CheckConstraint, func, BigInteger
 from flask_security import Security, SQLAlchemyUserDatastore, UserMixin, RoleMixin, login_required
 import config
 
@@ -38,7 +38,7 @@ class Scheduller(db.Model):
     user_id = Column(Integer, ForeignKey('user.id'))
     staff_id = Column(Integer, ForeignKey('staff.id'))
     game_server_id = Column(Integer, ForeignKey('game_server.id'), default=1)
-    price = Column(Integer, nullable=False)
+    price = Column(BigInteger, nullable=False)
     is_active = Column(Boolean, default=True)
     created_on = Column(DateTime, default=db.func.now())
     updated_on = Column(DateTime, default=db.func.now(), onupdate=db.func.now())

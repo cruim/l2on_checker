@@ -14,7 +14,7 @@ def cron_scheduller():
     tasks = api.Scheduller.query.filter_by(is_active=True).all()
     for task in tasks:
         request_response_processing(task=task)
-        api.close_dispose_connection()
+    api.close_dispose_connection()
 
 
 def request_response_processing(task):

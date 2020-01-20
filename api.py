@@ -21,10 +21,17 @@ def close_dispose_connection():
     db.engine.dispose()
 
 
-def update_scheduller_is_active(scheduller):
-    scheduller.is_active = not scheduller.is_active
-    db.session.add(scheduller)
-    db.session.commit()
+def update_scheduller_is_active(scheduller=False):
+    if scheduller:
+        scheduller.is_active = not scheduller.is_active
+        db.session.add(scheduller)
+        db.session.commit()
+    else:
+        tasks = Scheduller.query.all()
+        for task in tasks:
+            task.is_active = True
+            db.session.add(task)
+            db.session.commit()
 
 
 def check_access(telegram_id):

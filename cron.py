@@ -1,7 +1,13 @@
+from apscheduler.schedulers.background import BackgroundScheduler
+from flask import Flask
 import requests
 from bs4 import BeautifulSoup
 import api
-from config import API_TOKEN
+from config import API_TOKEN, SCHEDULLER_PORT
+
+
+def update_scheduller_is_active():
+    api.update_scheduller_is_active()
 
 
 def cron_scheduller():
@@ -30,3 +36,16 @@ def request_response_processing(task):
 
 def send_message(chat_id, text):
     requests.get(url="https://api.telegram.org/bot{0}/sendMessage?chat_id={1}&text={2}".format(API_TOKEN, chat_id, text))
+
+
+sched = BackgroundScheduler(daemon=True)
+sched.add_job(func=cron_scheduller, trigger='interval', minutes=6)
+sched.add_job(func=update_scheduller_is_active, trigger='interval', minutes=60)
+sched.start()
+
+
+app = Flask(__name__)
+
+
+if __name__ == "__main__":
+    app.run(port=SCHEDULLER_PORT)

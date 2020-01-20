@@ -31,6 +31,7 @@ def request_response_processing(task):
                 user = api.get_user(task.user_id)
                 api.update_scheduller_is_active(task)
                 send_message(chat_id=user.telegram_id, text=' '.join([staff.name, date.text, price]))
+                break
     return False
 
 
@@ -48,4 +49,4 @@ app = Flask(__name__)
 
 
 if __name__ == "__main__":
-    app.run(port=SCHEDULLER_PORT)
+    app.run(port=SCHEDULLER_PORT, debug=True)

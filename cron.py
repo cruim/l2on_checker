@@ -30,7 +30,7 @@ def request_response_processing(task):
             price = tr.find('td', {"class": "right"}).text.replace(" ", "")
             if int(price) <= task.price:
                 user = api.get_user(task.user_id)
-                send_message(chat_id=user.telegram_id, text=' '.join([staff.name, date.text, price]))
+                send_message(chat_id=user.telegram_id, text=' '.join([staff.name, date.text, format(price, ',').replace(',', ' ')]))
                 api.update_scheduller_is_active(task)
                 break
     return False

@@ -99,9 +99,9 @@ def create_staff_scheduller_task(user_id, staff_id, price, game_server_id):
 
 def get_staff_scheduller_list(telegram_id):
     user_id = get_user_id(telegram_id)
-    staff_list = tuple(db.session.query(Scheduller.staff_id, db.func.concat(Staff.name, ' ', Scheduller.price)).
+    staff_list = tuple(db.session.query(Scheduller.staff_id, Staff.name, Scheduller.price).
                        join(Staff, Staff.id == Scheduller.staff_id).filter(Scheduller.user_id == user_id).all())
-    staff_list = dict((x, y) for x, y in staff_list)
+    staff_list = dict((x, ' '.join([y, format(z, ',').replace(',', ' ')])) for x, y, z in staff_list)
     staff_list['/start'] = 'Главное меню'
     return staff_list
 

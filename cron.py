@@ -8,6 +8,7 @@ from config import API_TOKEN, SCHEDULLER_PORT
 
 def update_scheduller_is_active():
     api.update_scheduller_is_active()
+    api.close_dispose_connection()
 
 
 def cron_scheduller():

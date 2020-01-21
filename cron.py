@@ -42,7 +42,7 @@ def send_message(chat_id, text):
 
 sched = BackgroundScheduler(daemon=True)
 sched.add_job(func=cron_scheduller, trigger='interval', minutes=6)
-sched.add_job(func=update_scheduller_is_active, trigger='interval', minutes=60)
+sched.add_job(func=update_scheduller_is_active, trigger='interval', minutes=15)
 sched.start()
 
 

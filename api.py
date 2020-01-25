@@ -1,6 +1,13 @@
 from app import db, Scheduller, UserLog, Staff, ErrorLog, User, GameServer
 
 
+def auth(func):
+    def wrapper(*args):
+        if User.query.filter_by(telegram_id=args[0].message.from_user.id).first():
+            return func
+    return wrapper
+
+
 def build_l2on_url(id, task):
     world = get_game_server(task.game_server_id).l2on_id
     url = "http://l2on.net/?c=market&a=item&id=" + str(id)

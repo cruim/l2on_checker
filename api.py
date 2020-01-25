@@ -34,7 +34,7 @@ def update_scheduller_is_active(scheduller=False):
         db.session.add(scheduller)
         db.session.commit()
     else:
-        tasks = Scheduller.query.all()
+        tasks = Scheduller.query.filter_by(is_active=False).all()
         for task in tasks:
             task.is_active = True
             db.session.add(task)

@@ -3,6 +3,7 @@ import flask
 import telebot
 import config
 import api
+import cron
 
 API_TOKEN = config.API_TOKEN
 
@@ -74,6 +75,12 @@ def callback_inline(call):
         generate_keyboard(keys=text_responce[0], message=text_responce[1], telegram_id=call.message.chat.id)
     else:
         bot.send_message(call.message.chat.id, text_responce)
+
+
+sched = cron.BackgroundScheduler(daemon=True)
+sched.add_job(func=cron.cron_scheduller, trigger='interval', minutes=6)
+sched.add_job(func=cron.update_scheduller_is_active, trigger='interval', minutes=15)
+sched.start()
 
 
 app.run(host=WEBHOOK_LISTEN,

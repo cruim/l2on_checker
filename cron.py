@@ -8,14 +8,14 @@ from config import API_TOKEN, SCHEDULLER_PORT
 
 def update_scheduller_is_active():
     api.update_scheduller_is_active()
-    api.close_dispose_connection()
+    return api.close_dispose_connection()
 
 
 def cron_scheduller():
     tasks = api.Scheduller.query.filter_by(is_active=True).all()
     for task in tasks:
         request_response_processing(task=task)
-    api.close_dispose_connection()
+    return api.close_dispose_connection()
 
 
 def request_response_processing(task):

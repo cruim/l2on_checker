@@ -26,7 +26,7 @@ def request_response_processing(task):
     for tr in soup.find_all('tr'):
         try:
             date = tr.find_all('span')
-            if len(date) and 'bs4' in str(type(date[0])) and ('минут' in date[0].text or 'минут' in date[1].text):
+            if len(date) and 'bs4' in str(type(date[0])) and ('час' in date[0].text or len(date) > 1 and 'час' in date[1].text):
                 price = tr.find_all('td', {"class": "right"})[0].text.replace(' ', '')
                 if int(price) <= task.price:
                     user = api.get_user(task.user_id)

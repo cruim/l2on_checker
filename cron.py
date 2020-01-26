@@ -25,12 +25,11 @@ def request_response_processing(task):
     soup = BeautifulSoup(req.text)
     for tr in soup.find_all('tr'):
         date = tr.find_all('span')
-        date = date[1] if date and len(date) > 1 else False
-        if date and date.text and "минут" in date.text:
-            price = tr.find('td', {"class": "right"}).text.replace(" ", "")
+        if len(date) and 'bs4' in str(type(date[0])) and 'минут' in date[0].text:
+            price = tr.find_all('td', {"class": "right"})[0].text.replace(' ', '')
             if int(price) <= task.price:
                 user = api.get_user(task.user_id)
-                send_message(chat_id=user.telegram_id, text=' '.join([staff.name, date.text, format(int(price), ',').replace(',', ' ')]))
+                send_message(chat_id=user.telegram_id, text=' '.join([staff.name, date[0].text, format(int(price), ',').replace(',', ' ')]))
                 api.update_scheduller_is_active(task)
                 break
     return False

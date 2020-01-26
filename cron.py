@@ -32,7 +32,7 @@ def request_response_processing(task):
                 send_message(chat_id=user.telegram_id, text=' '.join([staff.name, format(int(price), ',').replace(',', ' ')]))
                 api.update_scheduller_is_active(task)
                 break
-    return False
+    return api.close_dispose_connection()
 
 
 def send_message(chat_id, text):

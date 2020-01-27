@@ -35,7 +35,7 @@ def request_response_processing(task):
                     break
         except:
             continue
-    return api.close_dispose_connection()
+    # return api.close_dispose_connection()
 
 
 def send_message(chat_id, text):

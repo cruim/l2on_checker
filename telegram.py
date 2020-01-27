@@ -79,7 +79,7 @@ def callback_inline(call):
 
 sched = cron.BackgroundScheduler(daemon=True)
 sched.add_job(func=cron.cron_scheduller, trigger='interval', minutes=6)
-sched.add_job(func=cron.update_scheduller_is_active, trigger='interval', minutes=20)
+sched.add_job(func=cron.update_scheduller_is_active, trigger='interval', minutes=60)
 sched.start()
 
 

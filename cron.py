@@ -1,4 +1,3 @@
-from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
 import requests
 from bs4 import BeautifulSoup
@@ -35,8 +34,6 @@ def request_response_processing(task):
                     break
         except:
             continue
-    # return api.close_dispose_connection()
-
 
 def send_message(chat_id, text):
     requests.get(url="https://api.telegram.org/bot{0}/sendMessage?chat_id={1}&text={2}".format(API_TOKEN, chat_id, text))

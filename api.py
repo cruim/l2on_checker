@@ -5,6 +5,7 @@ def auth(func):
     def wrapper(*args):
         if User.query.filter_by(telegram_id=args[0].message.from_user.id).first():
             return func
+    close_dispose_connection()
     return wrapper
 
 

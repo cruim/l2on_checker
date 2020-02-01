@@ -1,3 +1,4 @@
+from apscheduler.schedulers.background import BackgroundScheduler
 from flask import Flask
 import requests
 from bs4 import BeautifulSoup
@@ -11,6 +12,7 @@ def update_scheduller_is_active():
 
 
 def cron_scheduller():
+    api.close_dispose_connection()
     tasks = api.Scheduller.query.filter_by(is_active=True).all()
     for task in tasks:
         request_response_processing(task=task)
